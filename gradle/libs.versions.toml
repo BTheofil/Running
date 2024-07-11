@@ -122,4 +122,5 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 running-android-application = { id = "running.android.application", version = "unspecified"}
 running-android-application-compose = { id = "running.android.application.compose", version = "unspecified"}
 running-android-library = { id = "running.android.library", version = "unspecified"}
+running-android-library-compose = { id = "running.android.library.compose", version = "unspecified"}
 
