@@ -9,6 +9,7 @@ class AndroidFeatureUiConventionPlugin : Plugin<Project> {
         target.run {
             pluginManager.run {
                 apply("running.android.library")
+                apply("org.jetbrains.kotlin.plugin.compose")
             }
 
             dependencies {
