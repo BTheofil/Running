@@ -3,6 +3,7 @@ package hu.tb.running
 import android.app.Application
 import hu.tb.auth.data.di.authDataModule
 import hu.tb.auth.presentation.di.authViewModelModule
+import hu.tb.core.data.di.coreDataModule
 import hu.tb.running.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -24,7 +25,8 @@ class RunningApp : Application() {
             modules(
                 appModule,
                 authDataModule,
-                authViewModelModule
+                authViewModelModule,
+                coreDataModule
             )
         }
     }
