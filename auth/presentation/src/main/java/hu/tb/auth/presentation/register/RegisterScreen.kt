@@ -40,7 +40,6 @@ import hu.tb.core.presentation.designsystem.CrossIcon
 import hu.tb.core.presentation.designsystem.EmailIcon
 import hu.tb.core.presentation.designsystem.Poppins
 import hu.tb.core.presentation.designsystem.RunningDarkRed
-import hu.tb.core.presentation.designsystem.RunningGray
 import hu.tb.core.presentation.designsystem.RunningGreen
 import hu.tb.core.presentation.designsystem.RunningTheme
 import hu.tb.core.presentation.designsystem.component.GradientBackground
@@ -75,7 +74,13 @@ fun RegisterScreenRoot(
 
     RegisterScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction
+        onAction = { action ->
+            when (action) {
+                RegisterAction.OnLoginClick -> onSignInClick()
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        }
     )
 }
 
@@ -101,7 +106,7 @@ fun RegisterScreen(
                 withStyle(
                     style = SpanStyle(
                         fontFamily = Poppins,
-                        color = RunningGray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 ) {
                     append(stringResource(id = R.string.already_have_an_account) + " ")
