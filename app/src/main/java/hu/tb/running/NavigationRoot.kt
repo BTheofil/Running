@@ -1,6 +1,5 @@
 package hu.tb.running
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,6 +9,8 @@ import androidx.navigation.compose.navigation
 import hu.tb.auth.presentation.intro.IntroScreenRoot
 import hu.tb.auth.presentation.login.LoginScreenRoot
 import hu.tb.auth.presentation.register.RegisterScreenRoot
+import hu.tb.run.presentation.active_run.ActiveRunScreenRoot
+import hu.tb.run.presentation.run_overview.RunOverviewScreen
 
 @Composable
 fun NavigationRoot(
@@ -85,7 +86,16 @@ private fun NavGraphBuilder.runGraph(navController: NavHostController) {
         composable(
             route = "run_overview"
         ) {
-            Text(text = "run graph")
+            RunOverviewScreen(
+                onStartRunClick = {
+                    navController.navigate("active_run")
+                }
+            )
+        }
+        composable(
+            route = "active_run"
+        ) {
+            ActiveRunScreenRoot()
         }
     }
 }
