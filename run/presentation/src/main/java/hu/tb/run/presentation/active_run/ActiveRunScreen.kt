@@ -31,6 +31,7 @@ import hu.tb.core.presentation.designsystem.component.RunningScaffold
 import hu.tb.core.presentation.designsystem.component.RunningToolbar
 import hu.tb.run.presentation.R
 import hu.tb.run.presentation.active_run.components.RunDataCard
+import hu.tb.run.presentation.active_run.maps.TrackerMap
 import hu.tb.run.presentation.util.hasLocationPermission
 import hu.tb.run.presentation.util.hasNotificationPermission
 import hu.tb.run.presentation.util.shouldShowLocationPermissionRationale
@@ -101,7 +102,7 @@ private fun ActiveRunScreen(
             )
         )
 
-        if(!showLocationRationale && !showNotificationRationale) {
+        if (!showLocationRationale && !showNotificationRationale) {
             permissionLauncher.requestRunningPermissions(context)
         }
     }
@@ -141,6 +142,14 @@ private fun ActiveRunScreen(
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.surface)
         ) {
+            TrackerMap(
+                modifier = Modifier
+                    .fillMaxSize(),
+                isRunFinished = state.isRunFinished,
+                currentLocation = state.currentLocation,
+                locations = state.runData.locations,
+                onSnapshot = {}
+            )
             RunDataCard(
                 elapsedTime = state.elapsedTime,
                 runData = state.runData,
