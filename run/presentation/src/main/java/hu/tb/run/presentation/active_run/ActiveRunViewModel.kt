@@ -26,10 +26,9 @@ class ActiveRunViewModel(
     private val eventChannel = Channel<ActiveRunEvent>()
     val events = eventChannel.receiveAsFlow()
 
-    private val hasLocationPermission = MutableStateFlow(false)
-
     private val shouldTrack = snapshotFlow { state.shouldTrack }
         .stateIn(viewModelScope, SharingStarted.Lazily, state.shouldTrack)
+    private val hasLocationPermission = MutableStateFlow(false)
 
     private val isTracking = combine(
         shouldTrack,
@@ -77,15 +76,16 @@ class ActiveRunViewModel(
 
     fun onAction(action: ActiveRunAction) {
         when (action) {
-            ActiveRunAction.OnBackClick -> {
-                state = state.copy(shouldTrack = false)
+            ActiveRunAction.OnFinishRunClick -> {
+
             }
 
-            ActiveRunAction.OnFinishRunClick -> TODO()
-            ActiveRunAction.OnResumeClick -> {
-                state = state.copy(
-                    shouldTrack = true
-                )
+            ActiveRunAction.OnResumeRunClick -> {
+                state = state.copy(shouldTrack = true)
+            }
+
+            ActiveRunAction.OnBackClick -> {
+                state = state.copy(shouldTrack = false)
             }
 
             ActiveRunAction.OnToggleRunClick -> {
@@ -108,10 +108,10 @@ class ActiveRunViewModel(
                 )
             }
 
-            ActiveRunAction.DismissRationaleDialog -> {
+            is ActiveRunAction.DismissRationaleDialog -> {
                 state = state.copy(
-                    showLocationRationale = false,
-                    showNotificationRationale = false
+                    showNotificationRationale = false,
+                    showLocationRationale = false
                 )
             }
         }
