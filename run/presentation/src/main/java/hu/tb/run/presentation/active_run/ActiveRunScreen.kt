@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import hu.tb.core.presentation.designsystem.RunningTheme
 import hu.tb.core.presentation.designsystem.StartIcon
 import hu.tb.core.presentation.designsystem.StopIcon
+import hu.tb.core.presentation.designsystem.component.RunningActionButton
 import hu.tb.core.presentation.designsystem.component.RunningDialog
 import hu.tb.core.presentation.designsystem.component.RunningFAB
 import hu.tb.core.presentation.designsystem.component.RunningOutlinedActionButton
@@ -159,6 +160,34 @@ private fun ActiveRunScreen(
                     .fillMaxWidth()
             )
         }
+    }
+
+    if (!state.shouldTrack && state.hasStartedRunning) {
+        RunningDialog(
+            title = stringResource(id = R.string.running_is_paused),
+            onDismiss = {
+                onAction(ActiveRunAction.OnResumeRunClick)
+            },
+            description = stringResource(id = R.string.resume_or_finish_run),
+            primaryButton = {
+                RunningActionButton(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.resume),
+                    isLoading = false,
+                    onClick = {
+                        onAction(ActiveRunAction.OnResumeRunClick)
+                    })
+            },
+            secondaryButton = {
+                RunningOutlinedActionButton(
+                    modifier = Modifier.weight(1f),
+                    text = stringResource(id = R.string.finish),
+                    isLoading = state.isSavingRun,
+                    onClick = {
+                        onAction(ActiveRunAction.OnFinishRunClick)
+                    })
+            }
+        )
     }
 
     if (state.showLocationRationale || state.showNotificationRationale) {
