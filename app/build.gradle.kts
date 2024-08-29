@@ -1,7 +1,6 @@
 plugins {
     alias(libs.plugins.running.android.application.compose)
     alias(libs.plugins.running.jvm.ktor)
-    alias(libs.plugins.mapsplatform.secrets.plugin)
 }
 
 android {
