@@ -4,6 +4,7 @@ import android.app.Application
 import hu.tb.auth.data.di.authDataModule
 import hu.tb.auth.presentation.di.authViewModelModule
 import hu.tb.core.data.di.coreDataModule
+import hu.tb.core.database.di.databaseModule
 import hu.tb.run.location.di.locationModule
 import hu.tb.run.presentation.di.runPresentationModule
 import hu.tb.running.di.appModule
@@ -34,7 +35,8 @@ class RunningApp : Application() {
                 authViewModelModule,
                 coreDataModule,
                 runPresentationModule,
-                locationModule
+                locationModule,
+                databaseModule
             )
         }
     }
