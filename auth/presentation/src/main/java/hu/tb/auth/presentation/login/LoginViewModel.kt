@@ -1,12 +1,9 @@
-@file:OptIn(ExperimentalFoundationApi::class)
-
 package hu.tb.auth.presentation.login
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.text2.input.textAsFlow
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hu.tb.auth.domain.AuthRepository
@@ -34,10 +31,10 @@ class LoginViewModel(
     val event = eventChannel.receiveAsFlow()
 
     init {
-        combine(state.email.textAsFlow(), state.password.textAsFlow()) { email, password ->
+        combine(snapshotFlow { state.email }, snapshotFlow { state.password }) { email, password ->
             state = state.copy(
                 canLogin = userDataValidator.isValidEmail(email.toString().trim()) &&
-                        password.isNotEmpty()
+                        password.text.isNotEmpty()
             )
         }.launchIn(viewModelScope)
     }

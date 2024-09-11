@@ -6,6 +6,7 @@ import hu.tb.auth.presentation.di.authViewModelModule
 import hu.tb.core.data.di.coreDataModule
 import hu.tb.core.database.di.databaseModule
 import hu.tb.run.location.di.locationModule
+import hu.tb.run.network.di.networkModule
 import hu.tb.run.presentation.di.runPresentationModule
 import hu.tb.running.di.appModule
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,8 @@ class RunningApp : Application() {
                 coreDataModule,
                 runPresentationModule,
                 locationModule,
-                databaseModule
+                databaseModule,
+                networkModule
             )
         }
     }

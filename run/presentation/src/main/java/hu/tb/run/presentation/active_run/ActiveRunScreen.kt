@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
@@ -31,6 +32,7 @@ import hu.tb.core.presentation.designsystem.component.RunningFAB
 import hu.tb.core.presentation.designsystem.component.RunningOutlinedActionButton
 import hu.tb.core.presentation.designsystem.component.RunningScaffold
 import hu.tb.core.presentation.designsystem.component.RunningToolbar
+import hu.tb.core.presentation.ui.ObserveAsEvents
 import hu.tb.run.presentation.R
 import hu.tb.run.presentation.active_run.components.RunDataCard
 import hu.tb.run.presentation.active_run.maps.TrackerMap
@@ -46,10 +48,38 @@ import java.io.ByteArrayOutputStream
 fun ActiveRunScreenRoot(
     viewModel: ActiveRunViewModel = koinViewModel(),
     onServiceToggle: (isServiceRunning: Boolean) -> Unit,
+    onFinish: () -> Unit,
+    onBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    ObserveAsEvents(flow = viewModel.events) { event ->
+        when (event) {
+            is ActiveRunEvent.Error -> {
+                Toast.makeText(
+                    context,
+                    event.error.asString(context),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            is ActiveRunEvent.RunSaved -> onFinish()
+        }
+    }
+
     ActiveRunScreen(
         state = viewModel.state,
-        onAction = viewModel::onAction,
+        onAction = { action ->
+            when (action) {
+                is ActiveRunAction.OnBackClick -> {
+                    if (!viewModel.state.hasStartedRunning) {
+                        onBack()
+                    }
+                }
+
+                else -> Unit
+            }
+            viewModel.onAction(action)
+        },
         onServiceToggle = onServiceToggle
     )
 }
