@@ -71,7 +71,7 @@ class OfflineFirstRunRepository(
         localRunDataSource.deleteRun(id)
 
         //edge case - where the run is created in offline and than deleted in offline as well. In that case, we don't need to sync anything
-        val isPendingSync = runPendingSyncDao.getRunPendingSyncEntities(id) != null
+        val isPendingSync = runPendingSyncDao.getRunPendingSyncEntity(id) != null
         if(isPendingSync){
             runPendingSyncDao.deleteRunPendingSyncEntity(id)
             return
