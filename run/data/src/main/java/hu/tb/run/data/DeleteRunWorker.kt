@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import hu.tb.core.database.dao.RunPendingSyncDao
 import hu.tb.core.domain.run.RemoteRunDataSource
 
-class DeleteRunsWorker(
+class DeleteRunWorker(
     context: Context,
     private val params: WorkerParameters,
     private val remoteRunDataSource: RemoteRunDataSource,
