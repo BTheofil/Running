@@ -1,5 +1,6 @@
 package hu.tb.core.data.run
 
+import hu.tb.core.data.network.get
 import hu.tb.core.database.dao.RunPendingSyncDao
 import hu.tb.core.database.mappers.toRun
 import hu.tb.core.domain.SessionStorage
@@ -13,6 +14,10 @@ import hu.tb.core.domain.util.DataError
 import hu.tb.core.domain.util.EmptyResult
 import hu.tb.core.domain.util.Result
 import hu.tb.core.domain.util.asEmptyDataResult
+import io.ktor.client.HttpClient
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -26,7 +31,8 @@ class OfflineFirstRunRepository(
     private val applicationScope: CoroutineScope,
     private val runPendingSyncDao: RunPendingSyncDao,
     private val sessionStorage: SessionStorage,
-    private val syncRunScheduler: SyncRunScheduler
+    private val syncRunScheduler: SyncRunScheduler,
+    private val client: HttpClient
 ) : RunRepository {
 
     override fun getRuns(): Flow<List<Run>> {
@@ -82,7 +88,7 @@ class OfflineFirstRunRepository(
 
         //edge case - where the run is created in offline and than deleted in offline as well. In that case, we don't need to sync anything
         val isPendingSync = runPendingSyncDao.getRunPendingSyncEntity(id) != null
-        if(isPendingSync){
+        if (isPendingSync) {
             runPendingSyncDao.deleteRunPendingSyncEntity(id)
             return
         }
@@ -91,7 +97,7 @@ class OfflineFirstRunRepository(
             remoteRunDataSource.deleteRun(id)
         }.await()
 
-        if(remoteResult is Result.Error){
+        if (remoteResult is Result.Error) {
             applicationScope.launch {
                 syncRunScheduler.scheduleSync(
                     type = SyncRunScheduler.SyncType.DeleteRun(id)
@@ -145,6 +151,20 @@ class OfflineFirstRunRepository(
             createJobs.forEach { it.join() }
             deleteJobs.forEach { it.join() }
         }
+    }
+
+    override suspend fun deleteAllRuns() {
+        localRunDataSource.deleteAllRuns()
+    }
+
+    override suspend fun logout(): EmptyResult<DataError.Network> {
+        val result = client.get<Unit>(route = "/logout").asEmptyDataResult()
+
+        client.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+            .firstOrNull()
+            ?.clearToken()
+
+        return result
     }
 
 }

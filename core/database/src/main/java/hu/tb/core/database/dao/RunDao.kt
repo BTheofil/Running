@@ -15,7 +15,7 @@ interface RunDao {
     @Upsert
     suspend fun upsertRuns(runs: List<RunEntity>)
 
-    @Query("SELECT * FROM RunEntity ORDER BY dateTimeUtc DESC")
+    @Query("SELECT * FROM runentity ORDER BY dateTimeUtc DESC")
     fun getRuns(): Flow<List<RunEntity>>
 
     @Query("DELETE FROM RunEntity WHERE id=:id")

@@ -31,10 +31,10 @@ class LoginViewModel(
     val event = eventChannel.receiveAsFlow()
 
     init {
-        combine(snapshotFlow { state.email }, snapshotFlow { state.password }) { email, password ->
+        combine(snapshotFlow { state.email.text }, snapshotFlow { state.password.text }) { email, password ->
             state = state.copy(
                 canLogin = userDataValidator.isValidEmail(email.toString().trim()) &&
-                        password.text.isNotEmpty()
+                        password.isNotEmpty()
             )
         }.launchIn(viewModelScope)
     }

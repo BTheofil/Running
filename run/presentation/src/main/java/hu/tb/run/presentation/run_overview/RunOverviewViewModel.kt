@@ -5,9 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import hu.tb.core.domain.SessionStorage
 import hu.tb.core.domain.run.RunRepository
 import hu.tb.core.domain.run.SyncRunScheduler
 import hu.tb.run.presentation.run_overview.mapper.toRunUi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -15,7 +17,9 @@ import kotlin.time.Duration.Companion.minutes
 
 class RunOverviewViewModel(
     private val runRepository: RunRepository,
-    private val syncRunScheduler: SyncRunScheduler
+    private val syncRunScheduler: SyncRunScheduler,
+    private val applicationScope: CoroutineScope,
+    private val sessionStorage: SessionStorage
 ) : ViewModel() {
 
     var state by mutableStateOf(RunOverviewState())
@@ -23,12 +27,14 @@ class RunOverviewViewModel(
 
     init {
         viewModelScope.launch {
-            syncRunScheduler.scheduleSync(type = SyncRunScheduler.SyncType.FetchRuns(30.minutes))
+            syncRunScheduler.scheduleSync(
+                type = SyncRunScheduler.SyncType.FetchRuns(30.minutes)
+            )
         }
 
         runRepository.getRuns().onEach { runs ->
-            val runUi = runs.map { it.toRunUi() }
-            state = state.copy(runs = runUi)
+            val runsUi = runs.map { it.toRunUi() }
+            state = state.copy(runs = runsUi)
         }.launchIn(viewModelScope)
 
         viewModelScope.launch {
@@ -40,13 +46,22 @@ class RunOverviewViewModel(
     fun onAction(action: RunOverviewAction) {
         when (action) {
             RunOverviewAction.OnAnalyticsClick -> TODO()
-            RunOverviewAction.OnLogoutClick -> TODO()
+            RunOverviewAction.OnLogoutClick -> logout()
             RunOverviewAction.OnStartClick -> TODO()
             is RunOverviewAction.DeleteRun -> {
                 viewModelScope.launch {
                     runRepository.deleteRun(action.runUi.id)
                 }
             }
+        }
+    }
+
+    private fun logout() {
+        applicationScope.launch {
+            syncRunScheduler.cancelAllSync()
+            runRepository.deleteAllRuns()
+            runRepository.logout()
+            sessionStorage.set(null)
         }
     }
 }

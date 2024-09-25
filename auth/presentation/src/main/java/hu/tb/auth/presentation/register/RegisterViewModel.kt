@@ -31,7 +31,7 @@ class RegisterViewModel(
     val event = eventChannel.receiveAsFlow()
 
     init {
-        snapshotFlow { state.email }
+        snapshotFlow { state.email.text }
             .onEach { email ->
                 val isValidEmail = userDataValidator.isValidEmail(email.toString())
                 state = state.copy(
@@ -42,7 +42,7 @@ class RegisterViewModel(
             }
             .launchIn(viewModelScope)
 
-        snapshotFlow { state.password }
+        snapshotFlow { state.password.text }
             .onEach { password ->
                 val passwordValidationState =
                     userDataValidator.validatePassword(password.toString())
