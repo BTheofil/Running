@@ -1,6 +1,8 @@
 package hu.tb.running
 
 import android.app.Application
+import android.content.Context
+import com.google.android.play.core.splitcompat.SplitCompat
 import hu.tb.auth.data.di.authDataModule
 import hu.tb.auth.presentation.di.authViewModelModule
 import hu.tb.core.data.di.coreDataModule
@@ -45,5 +47,11 @@ class RunningApp : Application() {
                 runDataModule
             )
         }
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+
+        SplitCompat.install(this)
     }
 }

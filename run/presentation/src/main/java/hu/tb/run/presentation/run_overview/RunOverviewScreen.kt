@@ -1,6 +1,5 @@
 package hu.tb.run.presentation.run_overview
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -35,7 +34,8 @@ import org.koin.androidx.compose.koinViewModel
 fun RunOverviewScreen(
     viewModel: RunOverviewViewModel = koinViewModel(),
     onStartRunClick: () -> Unit,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
+    onAnalyticsClick: () -> Unit
 ) {
     RunOverviewScreen(
         state = viewModel.state,
@@ -43,13 +43,14 @@ fun RunOverviewScreen(
             when (action) {
                 RunOverviewAction.OnStartClick -> onStartRunClick()
                 RunOverviewAction.OnLogoutClick -> onLogoutClick()
+                RunOverviewAction.OnAnalyticsClick -> onAnalyticsClick()
                 else -> viewModel.onAction(action)
             }
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RunOverviewScreen(
     state: RunOverviewState,
@@ -110,7 +111,7 @@ fun RunOverviewScreen(
             ) {
                 RunListItem(
                     modifier = Modifier
-                        .animateItemPlacement(),
+                        .animateItem(),
                     runUi = it,
                     onDeleteClick = {
                         onAction(RunOverviewAction.DeleteRun(it))
